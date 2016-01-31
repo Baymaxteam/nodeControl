@@ -15,6 +15,7 @@ class XBee():
            Receives data from serial and checks buffer for potential messages.
            Returns the next message in the queue if available.
         """
+        self.RxMessages.clear()
         remaining = self.serial.inWaiting()
         while remaining:
             chunk = self.serial.read(remaining)
@@ -28,7 +29,7 @@ class XBee():
         self.RxBuff = (bytearray() if self.Validate(msgs[-1]) else msgs[-1])
 
         if self.RxMessages:
-           return self.RxMessages
+            return self.RxMessages
            #return self.RxMessages.popleft()
         else:
             return None
@@ -291,10 +292,10 @@ class XBee():
 
 
     def decodeRX(self, data, msg):
-        current1 = int(msg[30:31],16)
-        current2 = int(msg[31:32],16)
-        current3 = int(msg[33:34],16)
-        current4 = int(msg[34:35],16)
+        current1 = int(msg[30:31], 16)
+        current2 = int(msg[31:32], 16)
+        current3 = int(msg[33:34], 16)
+        current4 = int(msg[34:35], 16)
 
         current = current1*16*16*16+current2*16*16+current3*16+current4
         temp = dict([["nodeAddress", msg[:30]],
@@ -304,8 +305,12 @@ class XBee():
 
     def Currentreport(self):
         Msgoutput = []
+        MsgPopleft = []
+        Address=[]
+        current=[]
+        tempformat=[]
         self.CurrentSend(bytearray.fromhex("70"))
-        sleep(0.5)
+        sleep(5)
         Msg = self.Receive()
         i = 0
         j = len(Msg)
@@ -319,49 +324,51 @@ class XBee():
             temparray.extend(current)
             #print(temparray)
             tempformat = self.format(temparray)
+            print(tempformat)
             Msgoutput = self.decodeRX(Msgoutput, tempformat)
             i += 1
         #print(Msgoutput)
         return Msgoutput
-
+        i=0
+        j=0
     def node_N_all_open(self):
         self.Send(bytearray.fromhex("6E 01"))
-        sleep(0.25)
+        sleep(1)
         Msg = self.Receive()
         if Msg:
             print("Node N All Open")
 
     def node_N_all_close(self):
         self.Send(bytearray.fromhex("6E 00"))
-        sleep(0.25)
+        sleep(1)
         Msg = self.Receive()
         if Msg:
             print("Node N All Close")
 
     def node_All_open(self):
         self.Send(bytearray.fromhex("61 01"))
-        sleep(0.25)
+        sleep(1)
         Msg = self.Receive()
         if Msg:
             print("Node ALL Open")
 
     def node_All_close(self):
         self.Send(bytearray.fromhex("61 00"))
-        sleep(0.25)
+        sleep(1)
         Msg = self.Receive()
         if Msg:
             print("Node ALL Close")
 
     def node_N_one_open(self, node_address):
-        self.Node_One_Send(bytearray.fromhex("61 01"), node_address)
-        sleep(0.25)
+        self.Node_One_Send(bytearray.fromhex("6E 01"), node_address)
+        sleep(1)
         Msg = self.Receive()
         if Msg:
             print("Node_N_one_open")
 
     def node_N_one_close(self, node_address):
-        self.Node_One_Send(bytearray.fromhex("61 00"), node_address)
-        sleep(0.25)
+        self.Node_One_Send(bytearray.fromhex("6E 00"), node_address)
+        sleep(1)
         Msg = self.Receive()
         if Msg:
             print("Node_N_one_close")
