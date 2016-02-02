@@ -54,9 +54,12 @@ if __name__ == "__main__":
 
     rep = xbee.Currentreport()
 
-    rep
-    print(len(rep))
-    print(rep)
+    # rep
+    # print(len(rep))
+    # print(rep)
+    #xbee.node_all_reset()
+    xbee.node_one_reset(IRnode)
+
 
     #Node N Open
     # xbee.node_N_all_open()
@@ -109,11 +112,11 @@ if __name__ == "__main__":
     # sleep(1)
 
     
-    # xbee.IR_node_send(1)
-    # sleep(1)
-    # Msg = xbee.Receive()
-    # if Msg:
-    #     print("Node IR Switch")
+    xbee.IR_node_send("ON")
+    sleep(1)
+    Msg = xbee.Receive()
+    if Msg:
+        print("Node IR Switch")
 
     # xbee.IR_node_send(1)
     # sleep(5)

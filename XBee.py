@@ -417,6 +417,7 @@ class XBee():
         mu1 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 02 FC 21 C6 11 C2 01 8A 02 C2 01 08 07 90 01 8A 02 C2 01 BC 02 C2 01 8A 02 90 01 BC 02 C2 01 8A 02 C2 01 8A 02 C2 01 D6 06 C2 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02'
         mu2 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 01 90 01 08 07 C2 01 8A 02 90 01 BC 02 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02 90 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02 90 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 D6 06'
         mu3 = '7E 00 1A 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 00 43 00 C2 01 08 07 90 01'
+        
         if commd == 'ON':
             self.IRSend(on1)
             sleep(0.1)
@@ -452,6 +453,25 @@ class XBee():
             print('Nothing return')
 
 
+    def node_all_reset(self):
+        node_address = '7E 00 10 17 01 00 00 00 00 00 00 FF FF FF FE' 
+        self.Node_One_Send(bytearray.fromhex("02 44 31 04"), node_address)
+        sleep(1)
+        self.Node_One_Send(bytearray.fromhex("02 44 31 05"), node_address)
+        sleep(1)
+        Msg = self.Receive()
+        if Msg:
+            print("Node_reset_all")
+
+    def node_one_reset(self,node_address):
+        node_address = '7E 00 10 17 01'+node_address+'FF FE' 
+        self.Node_One_Send(bytearray.fromhex("02 44 31 04"), node_address)
+        sleep(1)
+        self.Node_One_Send(bytearray.fromhex("02 44 31 05"), node_address)
+        sleep(1)
+        Msg = self.Receive()
+        if Msg:
+            print("Node_reset_one")
 
 
 
