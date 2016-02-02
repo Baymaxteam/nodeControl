@@ -6,78 +6,117 @@ if __name__ == "__main__":
     xbee = XBee.XBee("COM7")  # Your serial port name here
     # A message that requires escaping
 
-    node1 = '7E 00 10 10 01 00 13 A2 00 40 EC 3A A4 2B 35 00 00'
-   
-    
-    node2 = '7E 00 10 10 01 00 13 A2 00 40 EC 3A B7 00 99 00 00'
+    #   L NODE STATE
+    #   111 =  6C 07 = 7 100 = 6C 04 =4  001 = 6C 01 = 1
+    #   110 =  6C 06 = 6 011 = 6C 03 =3  000 = 6C 00 = 0
+    #   101 =  6C 05 = 5 010 = 6C 02 =2
+    #   L turn = 6C 08 = 8
+    #   M turn = 6C 09 = 9
+    #   R turn = 6C 10 = 10
 
-    node3 = '7E 00 10 10 01 00 13 A2 00 40 EC 3A 97 71 58 00 00'
+    Nnode1 = '7E 00 10 10 01 00 13 A2 00 40 EC 3A A4 FF FE 00 00'
+    
+    Nnode2 = '7E 00 10 10 01 00 13 A2 00 40 EC 3A B7 FF FE 00 00'
+
+    Nnode3 = '7E 00 10 10 01 00 13 A2 00 40 EC 3A 97 FF FE 00 00'
+
+    Nnode4 = '7E 00 10 10 01 00 13 A2 00 40 B3 2D 41 FF FE 00 00'
+
+    Nnode5 = '7E 00 10 10 01 00 13 A2 00 40 EC 3A 98 FF FE 00 00'
+
+    Nnode6 = '7E 00 10 10 01 00 13 A2 00 40 B3 31 65 FF FE 00 00'
+
+    Lnode1 = '7E 00 10 10 01 00 13 A2 00 40 B3 2D 4F FF FE 00 00'
+
+    Lnode2 = '7E 00 10 10 01 00 13 A2 00 40 B3 2D 5B FF FE 00 00'
+
+    IRnode = '00 13 A2 00 40 EC 3A BE FF FE 00 00'
+
+              
+    
+
+
     #print (xbee.Currentreport())
 
     #Node N Open
-    xbee.node_N_all_open()
-    sleep(2)
-    xbee.node_N_all_close()
-    sleep(2)
-    # xbee.node_All_open()
-    # sleep(2)
-    # print (xbee.Currentreport())
+    # xbee.node_N_all_open()
+    # sleep(1.5)
+    # xbee.node_N_all_close()
+    # sleep(1.5)
+    # xbee.node_All_turn(1)
     # sleep(1)
-    # xbee.node_All_close()
+    # xbee.node_All_turn(0)
     # sleep(1)
-    xbee.node_N_one_open(node1)
-    sleep(2)
-    xbee.node_N_one_open(node2)
-    sleep(2)
-    xbee.node_N_one_open(node3)
-    sleep(2)
-    xbee.node_N_one_close(node1)
-    sleep(2)
-    xbee.node_N_one_close(node2)
-    sleep(2)
-    xbee.node_N_one_close(node3)
-    sleep(2)
+    # xbee.node_N_one_turn(Nnode1)
+    # sleep(1)
+    # xbee.node_N_one_turn(1,Nnode2)
+    # sleep(1)
+    # xbee.node_N_one_turn(0,Nnode2)
+    # sleep(1)
+    # xbee.node_N_one_turn(Nnode3)
+    # sleep(1)
+    # xbee.node_N_one_turn(Nnode4)
+    # sleep(1)
+    # xbee.node_N_one_turn(Nnode5)
+    # sleep(1)
+    # xbee.node_N_one_turn(Nnode6)
+    # sleep(1)
+    # xbee.node_L_one_turn(0,Lnode1)
+    # sleep(1)
+    # xbee.node_L_one_turn(1,Lnode2)
+    # sleep(1)
+    # xbee.node_L_one_turn(9,Lnode2)
+    # sleep(1)
+    # xbee.node_L_one_turn(9,Lnode2)
+    # sleep(1)
+    # xbee.node_N_one_turn(Nnode1)
+    # sleep(1)
+    # xbee.node_N_one_turn(Nnode2)
+    # sleep(1)
+    # xbee.node_N_one_turn(Nnode3)
+    # sleep(1)
+    # xbee.node_N_one_turn(Nnode4)
+    # sleep(1)
+    # xbee.node_N_one_turn(Nnode5)
+    # sleep(1)
+    # xbee.node_N_one_turn(Nnode6)
+    # sleep(1)
+    # xbee.node_L_one_turn(7,Lnode1)
+    # sleep(1)
+    # xbee.node_L_one_turn(7,Lnode2)
+    # sleep(1)
 
-
-
-    print (xbee.Currentreport())
-    # xbee.Send(bytearray.fromhex("6C 01"))
-    # sleep(2)
+    
+    xbee.IR_node_send(1)
+    sleep(1)
     # Msg = xbee.Receive()
     # if Msg:
-    #     print("Node L 1 open")
+    #     print("Node IR Switch")
 
-
-    # xbee.Send(bytearray.fromhex("6C 02"))
-    # sleep(2)
+    # xbee.IR_node_send(1)
+    # sleep(5)
     # Msg = xbee.Receive()
     # if Msg:
-    #     print("Node L 2 open")
+    #     print("Node IR Switch")
 
-    # xbee.Send(bytearray.fromhex("6C 03"))
-    # sleep(2)
+    # xbee.IR_node_send(2)
+    # sleep(1)
     # Msg = xbee.Receive()
     # if Msg:
-    #     print("Node L 1 2 open")
+    #     print("Node IR Switch")
 
-    # xbee.Send(bytearray.fromhex("6C 04"))
-    # sleep(2)
+    # xbee.IR_node_send(3)
+    # sleep(1)
     # Msg = xbee.Receive()
     # if Msg:
-    #     print("Node L 3 open")
-
-    # xbee.Send(bytearray.fromhex("6C 07"))
-    # sleep(2)
-    # Msg = xbee.Receive()
-    # if Msg:
-    #     print("Node L ALL open")
-
+    #     print("Node IR Switch")
     # xbee.Send(bytearray.fromhex("61 00"))
     # sleep(2)
     # Msg = xbee.Receive()
     # if Msg:
     #     print("Node ALL Close")  
 
+    #print (xbee.Currentreport())
     # xbee.IRSend(bytearray.fromhex("72 02 90 04 00 00 0C 00"))
     # sleep(1)
     # Msg = xbee.Receive()

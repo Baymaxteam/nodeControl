@@ -136,10 +136,10 @@ class XBee():
         #     addr & 0xFF,            # Destination address low byte
         #     options
         # )
-        hexs = '7E 00 16 10 01 00 00 00 00 00 00 FF FF FF FE 00 00'
-        frame = bytearray.fromhex(hexs)
+        # hexs = '7E 00 16 10 01 00 00 00 00 00 00 FF FF FF FE 00 00'
+        frame = bytearray.fromhex(msg)
         #  Append message content
-        frame.extend(msg)
+        #frame.extend(bytearray.fromhex(msg))
 
         # Calculate checksum byte
         frame.append(0xFF - (sum(frame[3:]) & 0xFF))
@@ -331,44 +331,97 @@ class XBee():
         return Msgoutput
         i=0
         j=0
-    def node_N_all_open(self):
+    def node_N_all_turn(self):
         self.Send(bytearray.fromhex("6E 01"))
-        sleep(1)
+        sleep(2)
         Msg = self.Receive()
         if Msg:
             print("Node N All Open")
 
-    def node_N_all_close(self):
-        self.Send(bytearray.fromhex("6E 00"))
-        sleep(1)
-        Msg = self.Receive()
-        if Msg:
-            print("Node N All Close")
+    # def node_N_all_close(self):
+    #     self.Send(bytearray.fromhex("6E 00"))
+    #     sleep(2)
+    #     Msg = self.Receive()
+    #     if Msg:
+    #         print("Node N All Close")
 
-    def node_All_open(self):
-        self.Send(bytearray.fromhex("61 01"))
-        sleep(1)
+    def node_All_turn(self, on):
+        if on == 1:
+            self.Send(bytearray.fromhex("61 01"))
+        elif on == 0:
+            self.Send(bytearray.fromhex("61 00"))
+        sleep(2)
         Msg = self.Receive()
         if Msg:
             print("Node ALL Open")
 
-    def node_All_close(self):
-        self.Send(bytearray.fromhex("61 00"))
-        sleep(1)
-        Msg = self.Receive()
-        if Msg:
-            print("Node ALL Close")
+    # def node_All_close(self):
+    #     self.Send(bytearray.fromhex("61 00"))
+    #     sleep(2)
+    #     Msg = self.Receive()
+    #     if Msg:
+    #         print("Node ALL Close")
 
-    def node_N_one_open(self, node_address):
-        self.Node_One_Send(bytearray.fromhex("6E 01"), node_address)
-        sleep(1)
+    def node_N_one_turn(self, on, node_address):
+        if on == 1:
+            self.Node_One_Send(bytearray.fromhex("6E 01"), node_address)
+        elif on == 0:
+            self.Node_One_Send(bytearray.fromhex("6E 00"), node_address)
+        sleep(2)
         Msg = self.Receive()
         if Msg:
-            print("Node_N_one_open")
+            print("Node_N_one_turn")
 
-    def node_N_one_close(self, node_address):
-        self.Node_One_Send(bytearray.fromhex("6E 00"), node_address)
-        sleep(1)
+    # def node_N_one_close(self, node_address):
+    #     self.Node_One_Send(bytearray.fromhex("6E 00"), node_address)
+    #     sleep(2)
+    #     Msg = self.Receive()
+    #     if Msg:
+    #         print("Node_N_one_close")
+
+    def node_L_one_turn(self, state, node_address):
+        if state in range(10):
+           turn = "6C 0"+ str(state)
+        elif state == 10:
+            turn = "6C "+ str(state)
+        self.Node_One_Send(bytearray.fromhex(turn), node_address)
+        sleep(2)
         Msg = self.Receive()
         if Msg:
-            print("Node_N_one_close")
+            print("Node_L_one_turn")
+
+
+    def IR_node_send(self, button):
+        on1 = '7E 00 52 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 02 FC 21 C6 11 C2 01 8A 02 C2 01 D6 06 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 90 01 BC 02 C2 01 8A 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 C2 01 08 07 90 01 08 07 C2 01 D6 06 C2 01 D6 06 C2 01 8A 02'
+        on2 = '7E 00 52 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 01 C2 01 08 07 90 01 BC 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 C2 01 D6 06 C2 01 8A 02 C2 01 8A 02 C2 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 8A 02 C2 01 D6 06 C2 01 BC 02 90 01 D6 06 F4 01 D6 06'
+        on3 = '7E 00 1A 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 00 43 00 C2 01 D6 06 C2 01'
+        up1 = '7E 00 52 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 02 92 22 94 11 F4 01 8A 02 90 01 08 07 F4 01 8A 02 90 01 BC 02 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 08 07 90 01 08 07 C2 01 D6 06 F4 01 D6 06 C2 01 8A 02'
+        up2 = '7E 00 52 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 01 C2 01 08 07 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 F4 01 D6 06 C2 01 08 07 C2 01 8A 02 C2 01 08 07 90 01 08 07'
+        up3 = '7E 00 1A 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 00 43 00 C2 01 D6 06 C2 01 '
+        mu1 = '7E 00 52 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 02 FC 21 C6 11 C2 01 8A 02 C2 01 08 07 90 01 8A 02 C2 01 BC 02 C2 01 8A 02 90 01 BC 02 C2 01 8A 02 C2 01 8A 02 C2 01 D6 06 C2 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02'
+        mu2 = '7E 00 52 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 01 90 01 08 07 C2 01 8A 02 90 01 BC 02 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02 90 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02 90 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 D6 06'
+        mu3 = '7E 00 1A 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 00 43 00 C2 01 08 07 90 01'
+        if button == 1:
+            self.IRSend(on1)
+            sleep(0.1)
+            self.IRSend(on2)
+            sleep(0.1)
+            self.IRSend(on3)
+            sleep(0.1)
+
+        elif button == 2:
+            self.IRSend(up1)
+            sleep(1)
+            self.IRSend(up2)
+            sleep(1)
+            self.IRSend(up3)
+            sleep(1)
+        elif button == 3:
+            self.IRSend(mu1)
+            sleep(1)
+            self.IRSend(mu2)
+            sleep(1)
+            self.IRSend(mu3)
+            sleep(1)
+            self.IRSend(mu3)
+            sleep(1)
