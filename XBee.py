@@ -61,9 +61,10 @@ class XBee():
         if (sum(frame[2:3+LSB]) & 0xFF) != 0xFF:
             return False
 
-        print("Rx: " + self.format(bytearray(b'\x7E') + msg))
+        # print("Rx: " + self.format(bytearray(b'\x7E') + msg))
         self.RxMessages.append(frame)
         return True
+
 
     def SendStr(self, msg, addr=0xFFFF, options=0x01, frameid=0x00):
         """
@@ -78,6 +79,7 @@ class XBee():
           Number of bytes sent
         """
         return self.Send(msg.encode('utf-8'), addr, options, frameid)
+
 
     def Send(self, msg, addr=0xFFFF, options=0x01, frameid=0x00):
         """
@@ -112,8 +114,10 @@ class XBee():
         # Escape any bytes containing reserved characters
         frame = self.Escape(frame)
 
-        print("Tx: " + self.format(frame))
+        # print("Tx: " + self.format(frame))
         return self.serial.write(frame)
+
+
     def IRSend(self, msg, addr=0xFFFF, options=0x01, frameid=0x00):
         """
         Inputs:
@@ -126,6 +130,7 @@ class XBee():
         Returns:
           Number of bytes sent
         """
+
         if not msg:
             return 0
 
@@ -147,8 +152,9 @@ class XBee():
         # Escape any bytes containing reserved characters
         frame = self.Escape(frame)
 
-        print("Tx: " + self.format(frame))
+        # print("Tx: " + self.format(frame))
         return self.serial.write(frame)
+
 
     def CurrentSend(self, msg, addr=0xFFFF, options=0x01, frameid=0x00):
         """
@@ -183,7 +189,7 @@ class XBee():
         # Escape any bytes containing reserved characters
         frame = self.Escape(frame)
 
-        print("Tx: " + self.format(frame))
+        # print("Tx: " + self.format(frame))
         return self.serial.write(frame)    
 
     def Node_One_Send(self, msg, node_address, addr=0xFFFF, options=0x01, frameid=0x00):
@@ -296,12 +302,13 @@ class XBee():
         current2 = int(msg[31:32], 16)
         current3 = int(msg[33:34], 16)
         current4 = int(msg[34:35], 16)
-
         current = current1*16*16*16+current2*16*16+current3*16+current4
-        temp = dict([["nodeAddress", msg[:30]],
-        ["Contect", current]])
+        address = msg[:23].upper()
+        temp = dict([["nodeAddress", address],
+                     ["Contect", current]])
         data.append(temp)
         return data
+
 
     def Currentreport(self):
         Msgoutput = []
@@ -313,24 +320,29 @@ class XBee():
         sleep(5)
         Msg = self.Receive()
         i = 0
-        j = len(Msg)
-        #print(j)
+        try:
+            j = len(Msg)
+        except:
+            return('Nothing return')
+
         while i < j:
             temparray=[]
             MsgPopleft = Msg.popleft()
-            Address= MsgPopleft[3:13]
+            Address= MsgPopleft[3:13] 
             current = MsgPopleft[17:19]
             temparray.extend(Address)
             temparray.extend(current)
             #print(temparray)
             tempformat = self.format(temparray)
-            print(tempformat)
+            # print(tempformat)
             Msgoutput = self.decodeRX(Msgoutput, tempformat)
             i += 1
         #print(Msgoutput)
         return Msgoutput
         i=0
         j=0
+
+
     def node_N_all_turn(self):
         self.Send(bytearray.fromhex("6E 01"))
         sleep(2)
@@ -353,7 +365,7 @@ class XBee():
         sleep(2)
         Msg = self.Receive()
         if Msg:
-            print("Node ALL Open")
+            print("Node ALL turn:"+str(on))
 
     # def node_All_close(self):
     #     self.Send(bytearray.fromhex("61 00"))
@@ -363,6 +375,7 @@ class XBee():
     #         print("Node ALL Close")
 
     def node_N_one_turn(self, on, node_address):
+        node_address = '7E 00 10 10 01 '+ node_address + ' FF FE 00 00' 
         if on == 1:
             self.Node_One_Send(bytearray.fromhex("6E 01"), node_address)
         elif on == 0:
@@ -387,11 +400,14 @@ class XBee():
         self.Node_One_Send(bytearray.fromhex(turn), node_address)
         sleep(2)
         Msg = self.Receive()
-        if Msg:
-            print("Node_L_one_turn")
+        try:
+            if Msg:
+                print("Node_L_one_turn")
+        except:
+            print('Nothing return')
 
 
-    def IR_node_send(self, button):
+    def IR_node_send(self, commd):
         on1 = '7E 00 52 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 02 FC 21 C6 11 C2 01 8A 02 C2 01 D6 06 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 90 01 BC 02 C2 01 8A 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 C2 01 08 07 90 01 08 07 C2 01 D6 06 C2 01 D6 06 C2 01 8A 02'
         on2 = '7E 00 52 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 01 C2 01 08 07 90 01 BC 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 C2 01 D6 06 C2 01 8A 02 C2 01 8A 02 C2 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 8A 02 C2 01 D6 06 C2 01 BC 02 90 01 D6 06 F4 01 D6 06'
         on3 = '7E 00 1A 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 00 43 00 C2 01 D6 06 C2 01'
@@ -401,7 +417,7 @@ class XBee():
         mu1 = '7E 00 52 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 02 FC 21 C6 11 C2 01 8A 02 C2 01 08 07 90 01 8A 02 C2 01 BC 02 C2 01 8A 02 90 01 BC 02 C2 01 8A 02 C2 01 8A 02 C2 01 D6 06 C2 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02'
         mu2 = '7E 00 52 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 01 90 01 08 07 C2 01 8A 02 90 01 BC 02 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02 90 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02 90 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 D6 06'
         mu3 = '7E 00 1A 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 00 43 00 C2 01 08 07 90 01'
-        if button == 1:
+        if commd == 'ON':
             self.IRSend(on1)
             sleep(0.1)
             self.IRSend(on2)
@@ -409,19 +425,33 @@ class XBee():
             self.IRSend(on3)
             sleep(0.1)
 
-        elif button == 2:
+        elif commd == 'UP':
             self.IRSend(up1)
-            sleep(1)
+            sleep(0.1)
             self.IRSend(up2)
-            sleep(1)
+            sleep(0.1)
             self.IRSend(up3)
-            sleep(1)
-        elif button == 3:
+            sleep(0.1)
+
+        elif commd == 'MUTE':
             self.IRSend(mu1)
-            sleep(1)
+            sleep(0.1)
             self.IRSend(mu2)
-            sleep(1)
+            sleep(0.1)
             self.IRSend(mu3)
-            sleep(1)
+            sleep(0.1)
             self.IRSend(mu3)
-            sleep(1)
+            sleep(0.1)
+
+        sleep(2)
+        Msg = self.Receive()
+        try:
+            if Msg:
+                print("Node IR Switch")
+        except:
+            print('Nothing return')
+
+
+
+
+
