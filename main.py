@@ -47,7 +47,7 @@ if __name__ == "__main__":
     Lnode1 = '00 13 A2 00 40 B3 2D 4F'
     Lnode2 = '00 13 A2 00 40 B3 2D 5B'
 
-    IRnode = '00 13 A2 00 40 EC 3A BE'
+    IRnode = '00 13 A2 00 40 C2 8B B7'
 
               
     
