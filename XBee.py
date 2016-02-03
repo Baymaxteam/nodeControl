@@ -393,6 +393,7 @@ class XBee():
     #         print("Node_N_one_close")
 
     def node_L_one_turn(self, state, node_address):
+        node_address = '7E 00 10 10 01 '+ node_address + ' FF FE 00 00' 
         if state in range(10):
            turn = "6C 0"+ str(state)
         elif state == 10:
