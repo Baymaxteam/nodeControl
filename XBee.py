@@ -125,7 +125,7 @@ class XBee():
         frame.append(0xFF - (sum(frame[3:]) & 0xFF))
 
         # Escape any bytes containing reserved characters
-        frame = self.Escape(frame)
+        # frame = self.Escape(frame)
 
         # print("Tx: " + self.format(frame))
         return self.serial.write(frame)
@@ -200,7 +200,7 @@ class XBee():
         frame.append(0xFF - (sum(frame[3:]) & 0xFF))
 
         # Escape any bytes containing reserved characters
-        frame = self.Escape(frame)
+        # frame = self.Escape(frame)
 
         # print("Tx: " + self.format(frame))
         return self.serial.write(frame)    
@@ -236,7 +236,7 @@ class XBee():
         frame.append(0xFF - (sum(frame[3:]) & 0xFF))
 
         # Escape any bytes containing reserved characters
-        frame = self.Escape(frame)
+        # frame = self.Escape(frame)
 
         print("Tx: " + self.format(frame))
         return self.serial.write(frame)
