@@ -7,6 +7,12 @@ class XBee():
     RxBuff = bytearray()
     RxMessages = deque()
 
+    node_address ={'00 13 A2 00 40 EC 3A A4':'Nnode1', '00 13 A2 00 40 EC 3A B7':'Nnode2', 
+                   '00 13 A2 00 40 EC 3A 97':'Nnode3', '00 13 A2 00 40 B3 2D 41':'Nnode4',
+                   '00 13 A2 00 40 EC 3A 98':'Nnode5', '00 13 A2 00 40 B3 31 65':'Nnode6',
+                   '00 13 A2 00 40 B3 2D 4F':'Lnode1', '00 13 A2 00 40 B3 2D 5B':'Lnode2',
+                   '00 13 A2 00 40 C2 8B B7':'IRnode'}
+                   
     def __init__(self, serialport, baudrate=9600):
         self.serial = serial.Serial(port=serialport, baudrate=baudrate)
 
@@ -23,8 +29,10 @@ class XBee():
             self.RxBuff.extend(chunk)
 
         msgs = self.RxBuff.split(bytes(b'\x7E'))
+
         for msg in msgs[:-1]:
-            self.Validate(msg)
+            if(len(msg)>0): # 避免空的訊息
+                self.Validate(msg)
 
         self.RxBuff = (bytearray() if self.Validate(msgs[-1]) else msgs[-1])
 
@@ -49,9 +57,12 @@ class XBee():
         if (len(msg) - msg.count(bytes(b'0x7D'))) < 9:
             return False
 
+       # print('msg:{0}'.format(msg))
         # All bytes in message must be unescaped before validating content
         frame = self.Unescape(msg)
-
+        # print('frame:{0}'.format(frame))
+        if(frame == None):
+            return False
         LSB = frame[1]
         # Frame (minus checksum) must contain at least length equal to LSB
         if LSB > (len(frame[2:]) - 1):
@@ -150,7 +161,7 @@ class XBee():
         frame.append(0xFF - (sum(frame[3:]) & 0xFF))
 
         # Escape any bytes containing reserved characters
-        frame = self.Escape(frame)
+        # frame = self.Escape(frame)
 
         # print("Tx: " + self.format(frame))
         return self.serial.write(frame)
@@ -393,6 +404,7 @@ class XBee():
     #         print("Node_N_one_close")
 
     def node_L_one_turn(self, state, node_address):
+        node_address = '7E 00 10 10 01 '+ node_address + ' FF FE 00 00' 
         if state in range(10):
            turn = "6C 0"+ str(state)
         elif state == 10:
@@ -419,22 +431,26 @@ class XBee():
         mu3 = '7E 00 1A 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 00 43 00 C2 01 08 07 90 01'
         
         if commd == 'ON':
+            print("IRcommd: ON")
             self.IRSend(on1)
-            sleep(0.1)
+            sleep(0.5)
             self.IRSend(on2)
-            sleep(0.1)
+            sleep(0.5)
             self.IRSend(on3)
-            sleep(0.1)
+            sleep(0.5)
+
 
         elif commd == 'UP':
+            print("IRcommd: UP")
             self.IRSend(up1)
-            sleep(0.1)
+            sleep(0.5)
             self.IRSend(up2)
-            sleep(0.1)
+            sleep(0.5)
             self.IRSend(up3)
-            sleep(0.1)
+            sleep(0.5)
 
         elif commd == 'MUTE':
+            print("IRcommd: MUTE")
             self.IRSend(mu1)
             sleep(0.1)
             self.IRSend(mu2)
