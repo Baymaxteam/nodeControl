@@ -10,9 +10,9 @@ if __name__ == "__main__":
     elif platform.system() == 'Darwin':
         xbee = XBee.XBee("/dev/cu.usbserial-FTYVE8XDA")
     else:
-        xbee = XBee.XBee("COM7")
+        xbee = XBee.XBee("COM9")
 
-
+    #xbeelisten = XBee.XBee("COM7")
 # Windows: xbee = XBee("COM7")
 # OSX: xbee = XBee("/dev/cu.usbserial-FTYVE8XDA")
 # Ubuntu: xbee = XBee("/dev/ttyUSB0")
@@ -47,24 +47,26 @@ if __name__ == "__main__":
     Lnode1 = '00 13 A2 00 40 B3 2D 4F'
     Lnode2 = '00 13 A2 00 40 B3 2D 5B'
 
-    IRnode = '00 13 A2 00 40 C2 8B B7'
+    IRnode = '00 13 A2 00 40 EC 3A BE'
 
               
     
 
-    rep = xbee.Currentreport()
-
+    # rep = xbee.Currentreport()
+    # Currentreport = xbeelisten.Receive()
     # rep
-    # print(len(rep))
-    # print(rep)
-    #xbee.node_all_reset()
-    xbee.node_one_reset(IRnode)
-
+    # print(len(Currentreport))
+    # print(Currentreport)
+    # xbee.node_all_reset()
+    # sleep(5)
+    # xbee.node_one_reset(IRnode)
+    # sleep(5)
 
     #Node N Open
     # xbee.node_N_all_open()
     # sleep(1.5)
     # xbee.node_N_all_close()
+
     # sleep(1.5)
     # xbee.node_All_turn(1)
     # sleep(1)

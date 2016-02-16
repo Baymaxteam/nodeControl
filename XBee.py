@@ -3,6 +3,8 @@ import serial
 from collections import deque
 from time import sleep
 
+
+
 class XBee():
     RxBuff = bytearray()
     RxMessages = deque()
@@ -318,6 +320,7 @@ class XBee():
         tempformat=[]
         self.CurrentSend(bytearray.fromhex("70"))
         sleep(5)
+
         Msg = self.Receive()
         i = 0
         try:
@@ -408,43 +411,62 @@ class XBee():
 
 
     def IR_node_send(self, commd):
-        on1 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 02 FC 21 C6 11 C2 01 8A 02 C2 01 D6 06 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 90 01 BC 02 C2 01 8A 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 C2 01 08 07 90 01 08 07 C2 01 D6 06 C2 01 D6 06 C2 01 8A 02'
-        on2 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 01 C2 01 08 07 90 01 BC 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 C2 01 D6 06 C2 01 8A 02 C2 01 8A 02 C2 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 8A 02 C2 01 D6 06 C2 01 BC 02 90 01 D6 06 F4 01 D6 06'
-        on3 = '7E 00 1A 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 00 43 00 C2 01 D6 06 C2 01'
-        up1 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 02 92 22 94 11 F4 01 8A 02 90 01 08 07 F4 01 8A 02 90 01 BC 02 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 08 07 90 01 08 07 C2 01 D6 06 F4 01 D6 06 C2 01 8A 02'
-        up2 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 01 C2 01 08 07 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 F4 01 D6 06 C2 01 08 07 C2 01 8A 02 C2 01 08 07 90 01 08 07'
-        up3 = '7E 00 1A 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 00 43 00 C2 01 D6 06 C2 01 '
-        mu1 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 02 FC 21 C6 11 C2 01 8A 02 C2 01 08 07 90 01 8A 02 C2 01 BC 02 C2 01 8A 02 90 01 BC 02 C2 01 8A 02 C2 01 8A 02 C2 01 D6 06 C2 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02'
-        mu2 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 01 90 01 08 07 C2 01 8A 02 90 01 BC 02 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02 90 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02 90 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 D6 06'
-        mu3 = '7E 00 1A 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 00 43 00 C2 01 08 07 90 01'
+        on1 = '7E 00 52 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 02 FC 21 C6 11 C2 01 8A 02 C2 01 D6 06 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 90 01 BC 02 C2 01 8A 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 C2 01 08 07 90 01 08 07 C2 01 D6 06 C2 01 D6 06 C2 01 8A 02'
+        on2 = '7E 00 52 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 01 C2 01 08 07 90 01 BC 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 C2 01 D6 06 C2 01 8A 02 C2 01 8A 02 C2 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 8A 02 C2 01 D6 06 C2 01 BC 02 90 01 D6 06 F4 01 D6 06'
+        on3 = '7E 00 1A 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 00 43 00 C2 01 D6 06 C2 01'
+        up1 = '7E 00 52 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 02 92 22 94 11 F4 01 8A 02 90 01 08 07 F4 01 8A 02 90 01 BC 02 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 08 07 90 01 08 07 C2 01 D6 06 F4 01 D6 06 C2 01 8A 02'
+        up2 = '7E 00 52 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 01 C2 01 08 07 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 F4 01 D6 06 C2 01 08 07 C2 01 8A 02 C2 01 08 07 90 01 08 07'
+        up3 = '7E 00 1A 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 00 43 00 C2 01 D6 06 C2 01 '
+        mu1 = '7E 00 52 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 02 FC 21 C6 11 C2 01 8A 02 C2 01 08 07 90 01 8A 02 C2 01 BC 02 C2 01 8A 02 90 01 BC 02 C2 01 8A 02 C2 01 8A 02 C2 01 D6 06 C2 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02'
+        mu2 = '7E 00 52 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 01 90 01 08 07 C2 01 8A 02 90 01 BC 02 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02 90 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02 90 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 D6 06'
+        mu3 = '7E 00 1A 10 01 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 00 02 00 43 00 C2 01 08 07 90 01'
         
         if commd == 'ON':
             self.IRSend(on1)
-            sleep(0.1)
+            sleep(0.5)
             self.IRSend(on2)
-            sleep(0.1)
+            sleep(0.5)
             self.IRSend(on3)
-            sleep(0.1)
+            sleep(0.5)
 
         elif commd == 'UP':
             self.IRSend(up1)
-            sleep(0.1)
+            sleep(0.5)
             self.IRSend(up2)
-            sleep(0.1)
+            sleep(0.5)
             self.IRSend(up3)
-            sleep(0.1)
+            sleep(0.5)
 
         elif commd == 'MUTE':
             self.IRSend(mu1)
-            sleep(0.1)
+            sleep(0.5)
             self.IRSend(mu2)
-            sleep(0.1)
+            sleep(0.5)
             self.IRSend(mu3)
-            sleep(0.1)
-            self.IRSend(mu3)
-            sleep(0.1)
+            sleep(0.5)
 
-        sleep(2)
+
+
+
+        # # NEC CODE
+        # ON = '7E 00 16 10 00 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 01 20 00 B7 48 F3 04'
+
+        # MU = '7E 00 16 10 00 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 01 20 00 A7 58 F3 04'
+
+        # UP = '7E 00 16 10 00 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 01 20 00 07 F8 F3 04'
+
+        # DW = '7E 00 16 10 00 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 01 20 00 8F 70 F3 04'
+
+        # if commd == 'ON':
+        #     self.IRSend(ON)
+        # elif commd == "MUTE":
+        #     self.IRSend(MU)
+        # elif commd == 'UP':
+        #     self.IRSend(UP)
+        # elif commd == 'DOWN':
+        #     self.IRSend(DW)
+
+        sleep(0.5)
         Msg = self.Receive()
         try:
             if Msg:
