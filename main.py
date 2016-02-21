@@ -169,7 +169,9 @@ import platform
     # elif platform.system() == 'Darwin':
     #     xbee = XBee.XBee("/dev/cu.usbserial-FTYVE8XDA")
     # else:
-xbee = XBee.XBee("COM9")
+
+# xbee = XBee.XBee("COM9")
+xbee = XBee.XBee("/dev/cu.usbserial-FTYVE8XDC")
 
 
 # Windows: xbee = XBee("COM7")

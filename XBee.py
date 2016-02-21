@@ -31,8 +31,13 @@ class XBee():
             self.RxBuff.extend(chunk)
 
         msgs = self.RxBuff.split(bytes(b'\x7E'))
+        # DEBUG用 
+        a = list(self.RxBuff)
+        t = ((""+' '.join(['%02.x']*len(a))+"") % tuple(a)).upper()
+        print("DEBUG: "+t)
 
         for msg in msgs[:-1]:
+            print("msg: ")
             print(msg)
             if(len(msg)>0): # 避免空的訊息
                 self.Validate(msg)
@@ -58,11 +63,14 @@ class XBee():
         # 9 bytes is Minimum length to be a valid Rx frame
         #  LSB, MSB, Type, Source Address(2), RSSI,
         #  Options, 1 byte data, checksum
-        if (len(msg) - msg.count(bytes(b'0x7D'))) < 9:
-            return False
+        # if (len(msg) - msg.count(bytes(b'0x7D'))) < 9:
+        #     print("checksum Error")
+        #     return False
        # print('msg:{0}'.format(msg))
         # All bytes in message must be unescaped before validating content
-        frame = self.Unescape(msg)
+        # frame = self.Unescape(msg)
+        frame = msg
+        #print(frame)
         # print('frame:{0}'.format(frame))
         if(frame == None):
             return False
