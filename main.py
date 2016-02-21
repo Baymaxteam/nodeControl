@@ -171,7 +171,9 @@ import platform
     # else:
 
 # xbee = XBee.XBee("COM9")
-xbee = XBee.XBee("/dev/cu.usbserial-FTYVE8XDC")
+xbee = XBee.XBee("/dev/cu.usbserial-FTYVE8XDA")
+IR = ("/dev/cu.usbserial-FTYVE8XDB")
+xbeelisten = XBee.XBee("/dev/cu.usbserial-FTYVE8XDC")
 
 
 # Windows: xbee = XBee("COM7")
@@ -210,10 +212,15 @@ Lnode2 = '00 13 A2 00 40 B3 2D 5B'
 
 IRnode = '00 13 A2 00 40 C2 8B B7'
 
-rep = xbee.Currentreport()
-rep
-print(len(rep))
-print(rep)
+rep = xbee.CurrentSend(bytearray.fromhex("70"))
+sleep(2)
+Currentreport = xbeelisten.Receive()
+# rep
+# print(len(rep))
+# print(rep)
+print('Curr: ')
+print(Currentreport)
+
     # xbee.node_all_reset()
     # xbee.node_one_reset(IRnode)
 

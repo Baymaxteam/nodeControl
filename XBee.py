@@ -8,7 +8,7 @@ from time import sleep
 class XBee():
     RxBuff = bytearray()
     RxMessages = deque()
-
+    nodeCurrent = []
     node_address ={'00 13 A2 00 40 EC 3A A4':'Nnode1', '00 13 A2 00 40 EC 3A B7':'Nnode2', 
                    '00 13 A2 00 40 EC 3A 97':'Nnode3', '00 13 A2 00 40 B3 2D 41':'Nnode4',
                    '00 13 A2 00 40 EC 3A 98':'Nnode5', '00 13 A2 00 40 B3 31 65':'Nnode6',
@@ -31,10 +31,12 @@ class XBee():
             self.RxBuff.extend(chunk)
 
         msgs = self.RxBuff.split(bytes(b'\x7E'))
-        # DEBUG用 
-        a = list(self.RxBuff)
-        t = ((""+' '.join(['%02.x']*len(a))+"") % tuple(a)).upper()
-        print("DEBUG: "+t)
+
+        #### DEBUG用 
+        # a = list(self.RxBuff)
+        # t = ((""+' '.join(['%02.x']*len(a))+"") % tuple(a)).upper()
+        # print("DEBUG: "+t)
+        ####
 
         for msg in msgs[:-1]:
             print("msg: ")
@@ -45,8 +47,34 @@ class XBee():
 
         self.RxBuff = (bytearray() if self.Validate(msgs[-1]) else msgs[-1])
 
-        if self.RxMessages:
-            return self.RxMessages
+        if self.RxMessages: # 如果 self.RxMessages 有東西
+            for msg in self.RxMessages :
+                # #### DEBUG
+                 # decodePAK = list(msg)
+                # print(decodePAK)
+                # t = ((""+' '.join(['%02.x']*len(decodePAK))+"") % tuple(decodePAK)).upper()
+                # print("DEBUG: "+t)
+                # ####
+
+                ## 用封包長度確認收到的封包整累
+                decodePAK = list(msg)
+                packageLen = decodePAK[1]
+                ##
+                # node 全開、全關
+                # n 全開、全關
+                # p 封包
+                if(packageLen == 13): # P package
+                    print('收到P封包')
+                elif(packageLen == 17):
+                    print("收到電流封包") 
+                    result = self.Currentreport(msg)
+                    print(result)
+                    self.nodeCurrent.append(result)
+                elif(packageLen == 14):
+                    print('收到廣播命令封包')
+                else:
+                    print('無法辨認')
+            return self.nodeCurrent
            #return self.RxMessages.popleft()
         else:
             return None
@@ -60,31 +88,23 @@ class XBee():
 
         Outputs: True or False, indicating message validity
         """
-        # 9 bytes is Minimum length to be a valid Rx frame
-        #  LSB, MSB, Type, Source Address(2), RSSI,
-        #  Options, 1 byte data, checksum
-        # if (len(msg) - msg.count(bytes(b'0x7D'))) < 9:
-        #     print("checksum Error")
-        #     return False
-       # print('msg:{0}'.format(msg))
+
+        # print('msg:{0}'.format(msg))
         # All bytes in message must be unescaped before validating content
         # frame = self.Unescape(msg)
-        frame = msg
-        #print(frame)
-        # print('frame:{0}'.format(frame))
-        if(frame == None):
+        
+        if(msg == None or len(msg)==0):
             return False
-        LSB = frame[1]
+        LSB = msg[1]
         # Frame (minus checksum) must contain at least length equal to LSB
-        if LSB > (len(frame[2:]) - 1):
+        if LSB > (len(msg[2:]) - 1):
             return False
 
         # Validate checksum
-        if (sum(frame[2:3+LSB]) & 0xFF) != 0xFF:
+        if (sum(msg[2:3+LSB]) & 0xFF) != 0xFF:
             return False
 
-        # print("Rx: " + self.format(bytearray(b'\x7E') + msg))
-        self.RxMessages.append(frame)
+        self.RxMessages.append(msg)
         return True
 
 
@@ -319,7 +339,7 @@ class XBee():
         return " ".join("{:02x}".format(b) for b in msg)
 
 
-    def decodeRX(self, data, msg):
+    def decodeRX(self, msg):
         current1 = int(msg[30:31], 16)
         current2 = int(msg[31:32], 16)
         current3 = int(msg[33:34], 16)
@@ -328,43 +348,26 @@ class XBee():
         address = msg[:23].upper()
         temp = dict([["nodeAddress", address],
                      ["Contect", current]])
-        data.append(temp)
-        return data
+        return temp
 
 
-    def Currentreport(self):
+    def Currentreport(self, msg):
         Msgoutput = []
         MsgPopleft = []
         Address=[]
         current=[]
         tempformat=[]
-        self.CurrentSend(bytearray.fromhex("70"))
-        sleep(2)
-        Msg = []
-        Msg = self.Receive()
-        i = 0
-        try:
-            j = len(Msg)
-        except:
-            return('Nothing return')
+        temparray=[]
 
-        while i < j:
-            temparray=[]
-            MsgPopleft = Msg.popleft()
-
-            Address= MsgPopleft[3:13] 
-            current = MsgPopleft[17:19]
-            temparray.extend(Address)
-            temparray.extend(current)
-            #print(temparray)
-            tempformat = self.format(temparray)
-            # print(tempformat)
-            Msgoutput = self.decodeRX(Msgoutput, tempformat)
-            i += 1
-        #print(Msgoutput)
+        Address= msg[3:13] 
+        current = msg[17:19]
+        temparray.extend(Address)
+        temparray.extend(current)
+        #print(temparray)
+        tempformat = self.format(temparray)
+        # print(tempformat)
+        Msgoutput = self.decodeRX(tempformat)
         return Msgoutput
-        i=0
-        j=0
 
 
     def node_N_all_turn(self):
