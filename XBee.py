@@ -445,6 +445,14 @@ class XBee():
         mu1 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 02 FC 21 C6 11 C2 01 8A 02 C2 01 08 07 90 01 8A 02 C2 01 BC 02 C2 01 8A 02 90 01 BC 02 C2 01 8A 02 C2 01 8A 02 C2 01 D6 06 C2 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02'
         mu2 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 01 90 01 08 07 C2 01 8A 02 90 01 BC 02 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02 90 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02 90 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 D6 06'
         mu3 = '7E 00 1A 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 00 43 00 C2 01 08 07 90 01'
+
+        vu1 = '7E 00 52 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 02 FC 21 2A 12 5E 01 20 03 5E 01 3A 07 5E 01 20 03 2C 01 EE 02 90 01 EE 02 5E 01 EE 02 5E 01 20 03 5E 01 EE 02 5E 01 08 07 90 01 BC 02 90 01 6C 07 5E 01 3A 07 90 01 08 07 90 01 3A 07 90 01 EE 02'
+        vu2 = '7E 00 52 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 01 5E 01 3A 07 5E 01 EE 02 5E 01 20 03 5E 01 EE 02 5E 01 EE 02 5E 01 6C 07 5E 01 EE 02 90 01 BC 02 5E 01 20 03 5E 01 3A 07 90 01 3A 07 5E 01 3A 07 5E 01 3A 07 90 01 EE 02 5E 01 3A 07 90 01 6C 07'
+        vu3 = '7E 00 1A 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 00 43 00 2C 01 3A 07 90 01'
+
+        vd1 = '7E 00 52 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 02 FC 21 2A 12 90 01 BC 02 5E 01 3A 07 90 01 EE 02 5E 01 EE 02 C2 01 8A 02 90 01 EE 02 5E 01 20 03 5E 01 BC 02 5E 01 6C 07 5E 01 EE 02 90 01 3A 07 5E 01 3A 07 5E 01 6C 07 5E 01 3A 07 C2 01 BC 02'
+        vd2 = '7E 00 52 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 01 5E 01 6C 07 2C 01 3A 07 90 01 BC 02 C2 01 BC 02 C2 01 8A 02 90 01 3A 07 5E 01 20 03 2C 01 EE 02 90 01 BC 02 90 01 EE 02 5E 01 3A 07 90 01 3A 07 90 01 08 07 90 01 EE 02 90 01 3A 07 5E 01 3A 07'
+        vd3 = '7E 00 1A 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 00 43 00 90 01 3A 07 5E 01'
         
         if commd == 'ON':
             print("IRcommd: ON")
@@ -455,12 +463,21 @@ class XBee():
             self.IRSend(on3)
 
         elif commd == 'UP':
-            print("IRcommd: UP")
+            print("IRcommd: P_UP")
             self.IRSend(up1)
             sleep(0.15)
             self.IRSend(up2)
             sleep(0.15)
             self.IRSend(up3)
+
+        elif commd == 'DOWN':
+            print("IRcommd: P_DOWN")
+            self.IRSend(dw1)
+            sleep(0.15)
+            self.IRSend(dw2)
+            sleep(0.15)
+            self.IRSend(dw3)
+
 
         elif commd == 'MUTE':
             print("IRcommd: MUTE")
@@ -470,13 +487,23 @@ class XBee():
             sleep(0.15)
             self.IRSend(mu3)
 
-        elif commd == 'DOWN':
-            print("IRcommd: DOWN")
-            self.IRSend(dw1)
+        elif commd == 'VU':
+            print("IRcommd: VOL_UP")
+            self.IRSend(vu1)
             sleep(0.15)
-            self.IRSend(dw2)
+            self.IRSend(vu2)
             sleep(0.15)
-            self.IRSend(dw3)
+            self.IRSend(vu3)
+
+        elif commd == 'VD':
+            print("IRcommd: VOL_DOWN")
+            self.IRSend(vd1)
+            sleep(0.15)
+            self.IRSend(vd2)
+            sleep(0.15)
+            self.IRSend(vd3)
+    
+
         # # NEC CODE
         # ON = '7E 00 16 10 00 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 01 20 00 B7 48 F3 04'
 
