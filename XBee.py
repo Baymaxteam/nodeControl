@@ -88,8 +88,18 @@ class XBee():
 
         Outputs: True or False, indicating message validity
         """
+<<<<<<< HEAD
 
         # print('msg:{0}'.format(msg))
+=======
+        # 9 bytes is Minimum length to be a valid Rx frame
+        #  LSB, MSB, Type, Source Address(2), RSSI,
+        #  Options, 1 byte data, checksum
+        if (len(msg) - msg.count(bytes(b'0x7D'))) < 9:
+            return False
+        # if
+       # print('msg:{0}'.format(msg))
+>>>>>>> Sam0221
         # All bytes in message must be unescaped before validating content
         # frame = self.Unescape(msg)
         

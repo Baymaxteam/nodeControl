@@ -1,19 +1,22 @@
 
-# import XBee
-# import binascii
-# from time import sleep
-# import platform
+import XBee
+import binascii
+from time import sleep
+import platform
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
 
-#     if platform.system() == 'Linux':
-#         xbee = XBee.XBee("/dev/ttyUSB0")
-#     elif platform.system() == 'Darwin':
-#         xbee = XBee.XBee("/dev/cu.usbserial-FTYVE8XDA")
-#     else:
-#         xbee = XBee.XBee("COM9")
+    if platform.system() == 'Linux':
+        xbee = XBee.XBee("/dev/ttyUSB0")
+    elif platform.system() == 'Darwin':
+        xbee = XBee.XBee("/dev/cu.usbserial-FTYVE8XDA")
+        xbeelisten = XBee.XBee("/dev/cu.usbserial-FTYVE8XDB")
+    else:
+        xbee = XBee.XBee("COM9")
+        xbeelisten = XBee.XBee("COM7")
 
-    #xbeelisten = XBee.XBee("COM7")
+    
+
 # Windows: xbee = XBee("COM7")
 # OSX: xbee = XBee("/dev/cu.usbserial-FTYVE8XDA")
 # Ubuntu: xbee = XBee("/dev/ttyUSB0")
@@ -53,11 +56,12 @@
               
     
 
-    # rep = xbee.Currentreport()
+    rep = xbee.Currentreport()
     # Currentreport = xbeelisten.Receive()
-    # rep
-    # print(len(Currentreport))
-    # print(Currentreport)
+    Currentreport = xbee.Receive()
+    rep
+    print(len(Currentreport))
+    print(Currentreport)
     # xbee.node_all_reset()
     # sleep(5)
     # xbee.node_one_reset(IRnode)
@@ -157,6 +161,7 @@
     # if Msg:
     #     print("Node IR Switch")        
 
+<<<<<<< HEAD
 import XBee
 import binascii
 from time import sleep
@@ -221,6 +226,63 @@ Currentreport = xbeelisten.Receive()
 print('Curr: ')
 print(Currentreport)
 
+=======
+# import XBee
+# import binascii
+# from time import sleep
+# import platform
+
+# # if __name__ == "__main__":
+
+#     # if platform.system() == 'Linux':
+#     #     xbee = XBee.XBee("/dev/ttyUSB0")
+#     # elif platform.system() == 'Darwin':
+#     #     xbee = XBee.XBee("/dev/cu.usbserial-FTYVE8XDA")
+#     # else:
+# xbee = XBee.XBee("COM9")
+
+
+# # Windows: xbee = XBee("COM7")
+# # OSX: xbee = XBee("/dev/cu.usbserial-FTYVE8XDA")
+# # Ubuntu: xbee = XBee("/dev/ttyUSB0")
+
+#     # xbee = XBee.XBee("COM7")  # Your serial port name here
+#     # A message that requires escaping
+
+#     #   L NODE STATE
+#     #   111 =  6C 07 = 7 100 = 6C 04 =4  001 = 6C 01 = 1
+#     #   110 =  6C 06 = 6 011 = 6C 03 =3  000 = 6C 00 = 0
+#     #   101 =  6C 05 = 5 010 = 6C 02 =2
+#     #   L turn = 6C 08 = 8
+#     #   M turn = 6C 09 = 9
+#     #   R turn = 6C 10 = 10
+
+#     # Nnode1 = '7E 00 10 10 01 00 13 A2 00 40 EC 3A A4 FF FE 00 00'
+#     # Nnode2 = '7E 00 10 10 01 00 13 A2 00 40 EC 3A B7 FF FE 00 00'
+#     # Nnode3 = '7E 00 10 10 01 00 13 A2 00 40 EC 3A 97 FF FE 00 00'
+#     # Nnode4 = '7E 00 10 10 01 00 13 A2 00 40 B3 2D 41 FF FE 00 00'
+#     # Nnode5 = '7E 00 10 10 01 00 13 A2 00 40 EC 3A 98 FF FE 00 00'
+#     # Nnode6 = '7E 00 10 10 01 00 13 A2 00 40 B3 31 65 FF FE 00 00'
+#     # Lnode1 = '7E 00 10 10 01 00 13 A2 00 40 B3 2D 4F FF FE 00 00'
+#     # Lnode2 = '7E 00 10 10 01 00 13 A2 00 40 B3 2D 5B FF FE 00 00'
+
+# Nnode1 = '00 13 A2 00 40 EC 3A A4'
+# Nnode2 = '00 13 A2 00 40 EC 3A B7'
+# Nnode3 = '00 13 A2 00 40 EC 3A 97'
+# Nnode4 = '00 13 A2 00 40 B3 2D 41'
+# Nnode5 = '00 13 A2 00 40 EC 3A 98'
+# Nnode6 = '00 13 A2 00 40 B3 31 65'
+
+# Lnode1 = '00 13 A2 00 40 B3 2D 4F'
+# Lnode2 = '00 13 A2 00 40 B3 2D 5B'
+
+# IRnode = '00 13 A2 00 40 C2 8B B7'
+
+# rep = xbee.Currentreport()
+# rep
+# print(len(rep))
+# print(rep)
+>>>>>>> Sam0221
     # xbee.node_all_reset()
     # xbee.node_one_reset(IRnode)
 
