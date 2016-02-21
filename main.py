@@ -1,17 +1,17 @@
-<<<<<<< HEAD
-import XBee
-import binascii
-from time import sleep
-import platform
 
-if __name__ == "__main__":
+# import XBee
+# import binascii
+# from time import sleep
+# import platform
 
-    if platform.system() == 'Linux':
-        xbee = XBee.XBee("/dev/ttyUSB0")
-    elif platform.system() == 'Darwin':
-        xbee = XBee.XBee("/dev/cu.usbserial-FTYVE8XDA")
-    else:
-        xbee = XBee.XBee("COM9")
+# if __name__ == "__main__":
+
+#     if platform.system() == 'Linux':
+#         xbee = XBee.XBee("/dev/ttyUSB0")
+#     elif platform.system() == 'Darwin':
+#         xbee = XBee.XBee("/dev/cu.usbserial-FTYVE8XDA")
+#     else:
+#         xbee = XBee.XBee("COM9")
 
     #xbeelisten = XBee.XBee("COM7")
 # Windows: xbee = XBee("COM7")
@@ -38,17 +38,17 @@ if __name__ == "__main__":
     # Lnode1 = '7E 00 10 10 01 00 13 A2 00 40 B3 2D 4F FF FE 00 00'
     # Lnode2 = '7E 00 10 10 01 00 13 A2 00 40 B3 2D 5B FF FE 00 00'
 
-    Nnode1 = '00 13 A2 00 40 EC 3A A4'
-    Nnode2 = '00 13 A2 00 40 EC 3A B7'
-    Nnode3 = '00 13 A2 00 40 EC 3A 97'
-    Nnode4 = '00 13 A2 00 40 B3 2D 41'
-    Nnode5 = '00 13 A2 00 40 EC 3A 98'
-    Nnode6 = '00 13 A2 00 40 B3 31 65'
+    # Nnode1 = '00 13 A2 00 40 EC 3A A4'
+    # Nnode2 = '00 13 A2 00 40 EC 3A B7'
+    # Nnode3 = '00 13 A2 00 40 EC 3A 97'
+    # Nnode4 = '00 13 A2 00 40 B3 2D 41'
+    # Nnode5 = '00 13 A2 00 40 EC 3A 98'
+    # Nnode6 = '00 13 A2 00 40 B3 31 65'
 
-    Lnode1 = '00 13 A2 00 40 B3 2D 4F'
-    Lnode2 = '00 13 A2 00 40 B3 2D 5B'
+    # Lnode1 = '00 13 A2 00 40 B3 2D 4F'
+    # Lnode2 = '00 13 A2 00 40 B3 2D 5B'
 
-    IRnode = '00 13 A2 00 40 EC 3A BE'
+    # IRnode = '00 13 A2 00 40 EC 3A BE'
 
               
     
@@ -115,11 +115,11 @@ if __name__ == "__main__":
     # sleep(1)
 
     
-    xbee.IR_node_send("ON")
-    sleep(1)
-    Msg = xbee.Receive()
-    if Msg:
-        print("Node IR Switch")
+    # xbee.IR_node_send("ON")
+    # sleep(1)
+    # Msg = xbee.Receive()
+    # if Msg:
+    #     print("Node IR Switch")
 
     # xbee.IR_node_send(1)
     # sleep(5)
@@ -156,20 +156,20 @@ if __name__ == "__main__":
     # Msg = xbee.Receive()
     # if Msg:
     #     print("Node IR Switch")        
-=======
+
 import XBee
 import binascii
 from time import sleep
 import platform
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    if platform.system() == 'Linux':
-        xbee = XBee.XBee("/dev/ttyUSB0")
-    elif platform.system() == 'Darwin':
-        xbee = XBee.XBee("/dev/cu.usbserial-FTYVE8XDA")
-    else:
-        xbee = XBee.XBee("COM7")
+    # if platform.system() == 'Linux':
+    #     xbee = XBee.XBee("/dev/ttyUSB0")
+    # elif platform.system() == 'Darwin':
+    #     xbee = XBee.XBee("/dev/cu.usbserial-FTYVE8XDA")
+    # else:
+xbee = XBee.XBee("COM9")
 
 
 # Windows: xbee = XBee("COM7")
@@ -196,28 +196,24 @@ if __name__ == "__main__":
     # Lnode1 = '7E 00 10 10 01 00 13 A2 00 40 B3 2D 4F FF FE 00 00'
     # Lnode2 = '7E 00 10 10 01 00 13 A2 00 40 B3 2D 5B FF FE 00 00'
 
-    Nnode1 = '00 13 A2 00 40 EC 3A A4'
-    Nnode2 = '00 13 A2 00 40 EC 3A B7'
-    Nnode3 = '00 13 A2 00 40 EC 3A 97'
-    Nnode4 = '00 13 A2 00 40 B3 2D 41'
-    Nnode5 = '00 13 A2 00 40 EC 3A 98'
-    Nnode6 = '00 13 A2 00 40 B3 31 65'
+Nnode1 = '00 13 A2 00 40 EC 3A A4'
+Nnode2 = '00 13 A2 00 40 EC 3A B7'
+Nnode3 = '00 13 A2 00 40 EC 3A 97'
+Nnode4 = '00 13 A2 00 40 B3 2D 41'
+Nnode5 = '00 13 A2 00 40 EC 3A 98'
+Nnode6 = '00 13 A2 00 40 B3 31 65'
 
-    Lnode1 = '00 13 A2 00 40 B3 2D 4F'
-    Lnode2 = '00 13 A2 00 40 B3 2D 5B'
+Lnode1 = '00 13 A2 00 40 B3 2D 4F'
+Lnode2 = '00 13 A2 00 40 B3 2D 5B'
 
-    IRnode = '00 13 A2 00 40 C2 8B B7'
+IRnode = '00 13 A2 00 40 C2 8B B7'
 
-              
-    
-
-    #rep = xbee.Currentreport()
-
-    # rep
-    # print(len(rep))
-    # print(rep)
+rep = xbee.Currentreport()
+rep
+print(len(rep))
+print(rep)
     # xbee.node_all_reset()
-    #xbee.node_one_reset(IRnode)
+    # xbee.node_one_reset(IRnode)
 
 
     #Node N Open
@@ -272,11 +268,11 @@ if __name__ == "__main__":
     # sleep(1)
 
     
-    xbee.IR_node_send("UP")
-    sleep(1)
-    Msg = xbee.Receive()
-    if Msg:
-        print("Node IR Switch")
+# xbee.IR_node_send("ON")
+    # sleep(1)
+    # Msg = xbee.Receive()
+    # if Msg:
+    #     print("Node IR Switch")
 
     # xbee.IR_node_send(1)
     # sleep(5)
@@ -313,4 +309,3 @@ if __name__ == "__main__":
     # Msg = xbee.Receive()
     # if Msg:
     #     print("Node IR Switch")        
->>>>>>> 64757b2df5cf9848a6fe06587d1942b58da9d556
