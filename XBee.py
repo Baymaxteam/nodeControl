@@ -60,7 +60,6 @@ class XBee():
         #  Options, 1 byte data, checksum
         if (len(msg) - msg.count(bytes(b'0x7D'))) < 9:
             return False
-        if
        # print('msg:{0}'.format(msg))
         # All bytes in message must be unescaped before validating content
         frame = self.Unescape(msg)
