@@ -1,19 +1,19 @@
 
-import XBee
-import binascii
-from time import sleep
-import platform
+# import XBee
+# import binascii
+# from time import sleep
+# import platform
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    if platform.system() == 'Linux':
-        xbee = XBee.XBee("/dev/ttyUSB0")
-    elif platform.system() == 'Darwin':
-        xbee = XBee.XBee("/dev/cu.usbserial-FTYVE8XDA")
-        xbeelisten = XBee.XBee("/dev/cu.usbserial-FTYVE8XDB")
-    else:
-        xbee = XBee.XBee("COM9")
-        xbeelisten = XBee.XBee("COM7")
+#     if platform.system() == 'Linux':
+#         xbee = XBee.XBee("/dev/ttyUSB0")
+#     elif platform.system() == 'Darwin':
+#         xbee = XBee.XBee("/dev/cu.usbserial-FTYVE8XDA")
+#         xbeelisten = XBee.XBee("/dev/cu.usbserial-FTYVE8XDB")
+#     else:
+#         xbee = XBee.XBee("COM9")
+#         xbeelisten = XBee.XBee("COM7")
 
     
 
@@ -56,12 +56,12 @@ if __name__ == "__main__":
               
     
 
-    rep = xbee.Currentreport()
-    # Currentreport = xbeelisten.Receive()
-    Currentreport = xbee.Receive()
-    rep
-    print(len(Currentreport))
-    print(Currentreport)
+    # rep = xbee.Currentreport()
+    # # Currentreport = xbeelisten.Receive()
+    # Currentreport = xbee.Receive()
+    # rep
+    # print(len(Currentreport))
+    # print(Currentreport)
     # xbee.node_all_reset()
     # sleep(5)
     # xbee.node_one_reset(IRnode)
@@ -226,19 +226,19 @@ IRnode = '00 13 A2 00 40 C2 8B B7'
 
 
 
-up1 = '7E 00 52 10 01 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 02 92 22 94 11 F4 01 8A 02 90 01 08 07 F4 01 8A 02 90 01 BC 02 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 08 07 90 01 08 07 C2 01 D6 06 F4 01 D6 06 C2 01 8A 02'
-up2 = '7E 00 52 10 01 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 01 C2 01 08 07 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 F4 01 D6 06 C2 01 08 07 C2 01 8A 02 C2 01 08 07 90 01 08 07'
-up3 = '7E 00 1A 10 01 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 00 43 00 C2 01 D6 06 C2 01'
+up1 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 02 92 22 94 11 F4 01 8A 02 90 01 08 07 F4 01 8A 02 90 01 BC 02 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 08 07 90 01 08 07 C2 01 D6 06 F4 01 D6 06 C2 01 8A 02'
+up2 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 01 C2 01 08 07 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 F4 01 D6 06 C2 01 08 07 C2 01 8A 02 C2 01 08 07 90 01 08 07'
+up3 = '7E 00 1A 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 00 43 00 C2 01 D6 06 C2 01'
 
 
-rep = xbee.CurrentSend(bytearray.fromhex("70"))
-sleep(2)
-Currentreport = xbeelisten.Receive()
-# rep
-# print(len(rep))
-# print(rep)
-print('Curr: ')
-print(Currentreport)
+# rep = xbee.CurrentSend(bytearray.fromhex("70"))
+# sleep(2)
+# Currentreport = xbeelisten.Receive()
+# # rep
+# # print(len(rep))
+# # print(rep)
+# print('Curr: ')
+# print(Currentreport)
 
 # import XBee
 # import binascii
@@ -304,7 +304,7 @@ pack1 = IRcode[0][0]
 pack2 = IRcode[1][0]
 pack3 = IRcode[2][0]
 print(pack1,pack2,pack3)
-xbee.IR_node_send(up1,up2,up3)
+xbee.IR_node_send(pack1,pack2,pack3)
 # xbee.IR_node_send(pack1,pack2,pack3)
 
 # rep = xbee.CurrentSend()
