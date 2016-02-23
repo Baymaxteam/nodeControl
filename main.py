@@ -64,8 +64,8 @@
     # print(Currentreport)
     # xbee.node_all_reset()
     # sleep(5)
-    # xbee.node_one_reset(IRnode)
-    # sleep(5)
+# xbee.node_one_reset(IRnode)
+# sleep(5)
 
     #Node N Open
     # xbee.node_N_all_open()
@@ -297,15 +297,17 @@ up3 = '7E 00 1A 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 00 43 00 C2 0
 # print(rep)
 
     # xbee.node_all_reset()
+# xbee.node_one_reset(Nnode2)
+# sleep(5)
 
-IRcode = xbeeIRreceive.IRReceive()
-# print(IRcode)
-pack1 = IRcode[0][0]
-pack2 = IRcode[1][0]
-pack3 = IRcode[2][0]
-print(pack1,pack2,pack3)
-xbee.IR_node_send(pack1,pack2,pack3)
+# IRcode = xbeeIRreceive.IRReceive()
+# # print(IRcode)
+# pack1 = IRcode[0][0]
+# pack2 = IRcode[1][0]
+# pack3 = IRcode[2][0]
+# print(pack1,pack2,pack3)
 # xbee.IR_node_send(pack1,pack2,pack3)
+# xbee.IR_node_send(up1,up2,up3)
 
 # rep = xbee.CurrentSend()
 # sleep(1)
@@ -314,7 +316,7 @@ xbee.IR_node_send(pack1,pack2,pack3)
 # print(len(rep))
 # print(rep)
 
-    # xbee.node_one_reset(IRnode)
+# xbee.node_one_reset(IRnode)
 
 
     #Node N Open
@@ -334,10 +336,53 @@ xbee.IR_node_send(pack1,pack2,pack3)
     # sleep(1)
     # xbee.node_N_one_turn(Nnode1)
     # sleep(1)
-    # xbee.node_N_one_turn(1, Nnode5)
-    # sleep(1)
-    # xbee.node_N_one_turn(0, Nnode5)
-    # sleep(1)
+# xbee.CurrentSend()
+
+# xbee.IR_node_send(up1,up2,up3)
+
+# sleep(0)
+# xbee.node_one_reset(IRnode)
+
+X=0.1
+
+i=0
+while(i<5):
+    # xbee.CurrentSend()
+   #  xbee.node_N_one_turn(1, Nnode1)
+   #  sleep(X)
+   #  #xbee.CurrentSend()
+   #  xbee.node_N_one_turn(0, Nnode1)
+   # # xbee.CurrentSend()
+   #  sleep(X)
+    # xbee.node_N_one_turn(1, Nnode3)
+    # sleep(X)
+  #  # xbee.CurrentSend()
+    # xbee.node_N_one_turn(0, Nnode3)
+  #  # xbee.CurrentSend()
+  #   sleep(X)
+  #   xbee.node_N_one_turn(1, Nnode4)
+  #   sleep(X)
+  #  # xbee.CurrentSend()
+  #   xbee.node_N_one_turn(0, Nnode4)
+  # # #  xbee.CurrentSend()
+  #   sleep(X)
+    xbee.node_N_one_turn(1, Nnode5)
+    sleep(X)
+  #  # xbee.CurrentSend()
+    xbee.node_N_one_turn(0, Nnode5)
+    sleep(X)
+   # xbee.CurrentSend()
+    i=i+1
+
+i=0
+while(i<5):
+    xbee.node_N_one_turn(1, Nnode4)
+    sleep(X)
+   # xbee.CurrentSend()
+    xbee.node_N_one_turn(0, Nnode4)
+  # #  xbee.CurrentSend()
+    sleep(X)
+    i=i+1
     # xbee.node_N_one_turn(Nnode3)
     # sleep(1)
     # xbee.node_N_one_turn(Nnode4)

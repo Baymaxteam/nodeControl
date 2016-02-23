@@ -437,7 +437,7 @@ class XBee():
             self.Node_One_Send(bytearray.fromhex("6E 01"), node_address)
         elif on == 0:
             self.Node_One_Send(bytearray.fromhex("6E 00"), node_address)
-        sleep(2)
+        # sleep(2)
         # Msg = self.Receive()
         # if Msg:
         #     print("Node_N_one_turn")
@@ -491,9 +491,9 @@ class XBee():
         # vd2 = '7E 00 52 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 01 5E 01 6C 07 2C 01 3A 07 90 01 BC 02 C2 01 BC 02 C2 01 8A 02 90 01 3A 07 5E 01 20 03 2C 01 EE 02 90 01 BC 02 90 01 EE 02 5E 01 3A 07 90 01 3A 07 90 01 08 07 90 01 EE 02 90 01 3A 07 5E 01 3A 07'
         # vd3 = '7E 00 1A 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 00 43 00 90 01 3A 07 5E 01'
         self.IRSend(pack1[:15]+"00 13 A2 00 40 C2 8B B7"+pack1[39:])
-        sleep(0.3)
+        sleep(1)
         self.IRSend(pack2[:15]+"00 13 A2 00 40 C2 8B B7"+pack2[39:])
-        sleep(0.3)
+        sleep(1)
         self.IRSend(pack3[:15]+"00 13 A2 00 40 C2 8B B7"+pack3[39:])
 
         # self.IRSend(up1)
@@ -538,7 +538,7 @@ class XBee():
         # elif commd == 'DOWN':
         #     self.IRSend(DW)
 
-        sleep(0.2)
+        sleep(1)
         # Msg = self.Receive()
         # try:
         #     if Msg:
