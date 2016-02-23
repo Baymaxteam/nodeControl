@@ -170,8 +170,10 @@ import platform
     #     xbee = XBee.XBee("/dev/cu.usbserial-FTYVE8XDA")
     # else:
 
-# xbee = XBee.XBee("COM9")
-xbee = XBee.XBee("/dev/cu.usbserial-FTYVE8XDC")
+xbee = XBee.XBee("COM7")
+xbeeListen = XBee.XBee("COM9")
+xbeeIRreceive = XBee.XBee("COM8")
+# xbee = XBee.XBee("/dev/cu.usbserial-FTYVE8XDC")
 
 
 # Windows: xbee = XBee("COM7")
@@ -210,17 +212,40 @@ Lnode2 = '00 13 A2 00 40 B3 2D 5B'
 
 IRnode = '00 13 A2 00 40 C2 8B B7'
 
-rep = xbee.Currentreport()
-rep
-print(len(rep))
-print(rep)
+
+up1 = '7E 00 52 10 01 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 02 92 22 94 11 F4 01 8A 02 90 01 08 07 F4 01 8A 02 90 01 BC 02 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 08 07 90 01 08 07 C2 01 D6 06 F4 01 D6 06 C2 01 8A 02'
+up2 = '7E 00 52 10 01 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 01 C2 01 08 07 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 F4 01 D6 06 C2 01 08 07 C2 01 8A 02 C2 01 08 07 90 01 08 07'
+up3 = '7E 00 1A 10 01 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 00 43 00 C2 01 D6 06 C2 01'
+
     # xbee.node_all_reset()
+
+IRcode = xbeeIRreceive.IRReceive()
+# print(IRcode)
+pack1 = IRcode[0][0]
+pack2 = IRcode[1][0]
+pack3 = IRcode[2][0]
+print(pack1,pack2,pack3)
+xbee.IR_node_send(up1,up2,up3)
+# xbee.IR_node_send(pack1,pack2,pack3)
+
+# rep = xbee.CurrentSend()
+# sleep(1)
+# listen = xbeeListen.Receive()
+# print (listen)
+# print(len(rep))
+# print(rep)
+
     # xbee.node_one_reset(IRnode)
 
 
     #Node N Open
-    # xbee.node_N_all_open()
-    # sleep(1.5)
+# xbee.node_All_turn(1)
+# listen = xbeeListen.Receive()
+# print (listen)
+# sleep(1.5)
+# xbee.node_All_turn(0)
+# listen = xbeeListen.Receive()
+# print (listen)
     # xbee.node_N_all_close()
 
     # sleep(1.5)
@@ -270,7 +295,7 @@ print(rep)
     # sleep(1)
 
     
-# xbee.IR_node_send("ON")
+# xbee.IR_node_send("DOWN")
     # sleep(1)
     # Msg = xbee.Receive()
     # if Msg:

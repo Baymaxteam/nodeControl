@@ -8,7 +8,7 @@ from time import sleep
 class XBee():
     RxBuff = bytearray()
     RxMessages = deque()
-
+    nodeCurrent = []
     node_address ={'00 13 A2 00 40 EC 3A A4':'Nnode1', '00 13 A2 00 40 EC 3A B7':'Nnode2', 
                    '00 13 A2 00 40 EC 3A 97':'Nnode3', '00 13 A2 00 40 B3 2D 41':'Nnode4',
                    '00 13 A2 00 40 EC 3A 98':'Nnode5', '00 13 A2 00 40 B3 31 65':'Nnode6',
@@ -31,22 +31,50 @@ class XBee():
             self.RxBuff.extend(chunk)
 
         msgs = self.RxBuff.split(bytes(b'\x7E'))
-        # DEBUG用 
-        a = list(self.RxBuff)
-        t = ((""+' '.join(['%02.x']*len(a))+"") % tuple(a)).upper()
-        print("DEBUG: "+t)
+
+        #### DEBUG用 
+        # a = list(self.RxBuff)
+        # t = ((""+' '.join(['%02.x']*len(a))+"") % tuple(a)).upper()
+        # print("DEBUG: "+t)
+        ####
 
         for msg in msgs[:-1]:
-            print("msg: ")
-            print(msg)
+            # print("msg: ")
+            # print(msg)
             if(len(msg)>0): # 避免空的訊息
                 self.Validate(msg)
 
 
         self.RxBuff = (bytearray() if self.Validate(msgs[-1]) else msgs[-1])
 
-        if self.RxMessages:
-            return self.RxMessages
+        if self.RxMessages: # 如果 self.RxMessages 有東西
+            for msg in self.RxMessages :
+                #### DEBUG
+                decodePAK = list(msg)
+                print(decodePAK)
+                t = ((""+' '.join(['%02.x']*len(decodePAK))+"") % tuple(decodePAK)).upper()
+                print("DEBUG: "+t)
+                ####
+
+                ## 用封包長度確認收到的封包整累
+                decodePAK = list(msg)
+                packageLen = decodePAK[1]
+                ##
+                # node 全開、全關
+                # n 全開、全關
+                # p 封包
+                if(packageLen == 13): # P package
+                    print('收到P封包')
+                elif(packageLen == 17):
+                    print("收到電流封包") 
+                    result = self.Currentreport(msg)
+                    print(result)
+                    self.nodeCurrent.append(result)
+                elif(packageLen == 14):
+                    print('收到廣播命令封包')
+                else:
+                    print('無法辨認')
+            return self.nodeCurrent
            #return self.RxMessages.popleft()
         else:
             return None
@@ -72,8 +100,9 @@ class XBee():
         frame = msg
         #print(frame)
         # print('frame:{0}'.format(frame))
-        if(frame == None):
+        if(frame == None or len(frame)==0):
             return False
+
         LSB = frame[1]
         # Frame (minus checksum) must contain at least length equal to LSB
         if LSB > (len(frame[2:]) - 1):
@@ -174,11 +203,12 @@ class XBee():
         # Escape any bytes containing reserved characters
         # frame = self.Escape(frame)
 
-        # print("Tx: " + self.format(frame))
+        print("Tx: " + self.format(frame))
+
         return self.serial.write(frame)
 
 
-    def CurrentSend(self, msg, addr=0xFFFF, options=0x01, frameid=0x00):
+    def CurrentSend(self, addr=0xFFFF, options=0x01, frameid=0x00):
         """
         Inputs:
           msg: A message, in bytes or bytearray format, to be sent to an XBee
@@ -190,8 +220,8 @@ class XBee():
         Returns:
           Number of bytes sent
         """
-        if not msg:
-            return 0
+        # if not msg:
+        #     return 0
 
         # hexs = '7E 00 {:02X} 01 {:02X} {:02X} {:02X} {:02X}'.format(
         #     len(msg) + 5,           # LSB (length)
@@ -200,10 +230,11 @@ class XBee():
         #     addr & 0xFF,            # Destination address low byte
         #     options
         # )     
-        hexs = '7E 00 0F 10 00 00 00 00 00 00 00 FF FF FF FE 00 00'
+        hexs = '7E 00 0F 10 00 00 00 00 00 00 00 FF FF FF FE 00 00 70'
         frame = bytearray.fromhex(hexs)
         #  Append message content
-        frame.extend(msg)
+
+        # frame.extend(msg)
 
         # Calculate checksum byte
         frame.append(0xFF - (sum(frame[3:]) & 0xFF))
@@ -319,7 +350,7 @@ class XBee():
         return " ".join("{:02x}".format(b) for b in msg)
 
 
-    def decodeRX(self, data, msg):
+    def decodeRX(self, msg):
         current1 = int(msg[30:31], 16)
         current2 = int(msg[31:32], 16)
         current3 = int(msg[33:34], 16)
@@ -328,43 +359,25 @@ class XBee():
         address = msg[:23].upper()
         temp = dict([["nodeAddress", address],
                      ["Contect", current]])
-        data.append(temp)
-        return data
+        return temp
 
-
-    def Currentreport(self):
+    def Currentreport(self, msg):
         Msgoutput = []
         MsgPopleft = []
         Address=[]
         current=[]
         tempformat=[]
-        self.CurrentSend(bytearray.fromhex("70"))
-        sleep(2)
-        Msg = []
-        Msg = self.Receive()
-        i = 0
-        try:
-            j = len(Msg)
-        except:
-            return('Nothing return')
+        temparray=[]
 
-        while i < j:
-            temparray=[]
-            MsgPopleft = Msg.popleft()
-
-            Address= MsgPopleft[3:13] 
-            current = MsgPopleft[17:19]
-            temparray.extend(Address)
-            temparray.extend(current)
-            #print(temparray)
-            tempformat = self.format(temparray)
-            # print(tempformat)
-            Msgoutput = self.decodeRX(Msgoutput, tempformat)
-            i += 1
-        #print(Msgoutput)
+        Address= msg[3:13] 
+        current = msg[17:19]
+        temparray.extend(Address)
+        temparray.extend(current)
+        #print(temparray)
+        tempformat = self.format(temparray)
+        # print(tempformat)
+        Msgoutput = self.decodeRX(tempformat)
         return Msgoutput
-        i=0
-        j=0
 
 
     def node_N_all_turn(self):
@@ -387,10 +400,10 @@ class XBee():
         elif on == 0:
             self.Send(bytearray.fromhex("61 00"))
         sleep(2)
-        Msg = self.Receive()
-        if Msg:
-            print("Node ALL turn:"+str(on))
-
+        # Msg = self.Receive()
+        # if Msg:
+        #     print("Node ALL turn:"+str(on))
+        print("Node ALL turn:"+str(on))
     # def node_All_close(self):
     #     self.Send(bytearray.fromhex("61 00"))
     #     sleep(2)
@@ -405,10 +418,10 @@ class XBee():
         elif on == 0:
             self.Node_One_Send(bytearray.fromhex("6E 00"), node_address)
         sleep(2)
-        Msg = self.Receive()
-        if Msg:
-            print("Node_N_one_turn")
-
+        # Msg = self.Receive()
+        # if Msg:
+        #     print("Node_N_one_turn")
+        print("Node_N_one_turn")
     # def node_N_one_close(self, node_address):
     #     self.Node_One_Send(bytearray.fromhex("6E 00"), node_address)
     #     sleep(2)
@@ -424,85 +437,68 @@ class XBee():
             turn = "6C "+ str(state)
         self.Node_One_Send(bytearray.fromhex(turn), node_address)
         sleep(2)
-        Msg = self.Receive()
-        try:
-            if Msg:
-                print("Node_L_one_turn")
-        except:
-            print('Nothing return')
+        # Msg = self.Receive()
+        # try:
+        #     if Msg:
+        #         print("Node_L_one_turn")
+        # except:
+        #     print('Nothing return')
 
+        print("Node_L_one_turn")
 
-    def IR_node_send(self, commd):
-        on1 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 02 FC 21 C6 11 C2 01 8A 02 C2 01 D6 06 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 90 01 BC 02 C2 01 8A 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 C2 01 08 07 90 01 08 07 C2 01 D6 06 C2 01 D6 06 C2 01 8A 02'
-        on2 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 01 C2 01 08 07 90 01 BC 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 C2 01 D6 06 C2 01 8A 02 C2 01 8A 02 C2 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 8A 02 C2 01 D6 06 C2 01 BC 02 90 01 D6 06 F4 01 D6 06'
-        on3 = '7E 00 1A 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 00 43 00 C2 01 D6 06 C2 01'
+    def IR_node_send(self, pack1, pack2, pack3):
+        # on1 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 02 FC 21 C6 11 C2 01 8A 02 C2 01 D6 06 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 90 01 BC 02 C2 01 8A 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 C2 01 08 07 90 01 08 07 C2 01 D6 06 C2 01 D6 06 C2 01 8A 02'
+        # on2 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 01 C2 01 08 07 90 01 BC 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 C2 01 D6 06 C2 01 8A 02 C2 01 8A 02 C2 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 8A 02 C2 01 D6 06 C2 01 BC 02 90 01 D6 06 F4 01 D6 06'
+        # on3 = '7E 00 1A 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 00 43 00 C2 01 D6 06 C2 01'
+
         up1 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 02 92 22 94 11 F4 01 8A 02 90 01 08 07 F4 01 8A 02 90 01 BC 02 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 08 07 90 01 08 07 C2 01 D6 06 F4 01 D6 06 C2 01 8A 02'
         up2 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 01 C2 01 08 07 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 8A 02 C2 01 08 07 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 C2 01 D6 06 C2 01 8A 02 F4 01 D6 06 C2 01 08 07 C2 01 8A 02 C2 01 08 07 90 01 08 07'
         up3 = '7E 00 1A 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 00 43 00 C2 01 D6 06 C2 01'
-        dw1 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 02 60 22 C6 11 C2 01 BC 02 90 01 08 07 C2 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 90 01 BC 02 90 01 3A 07 90 01 BC 02 90 01 08 07 C2 01 08 07 90 01 08 07 C2 01 08 07 C2 01 8A 02'
-        dw2 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 01 C2 01 08 07 90 01 08 07 C2 01 08 07 90 01 BC 02 C2 01 BC 02 90 01 08 07 90 01 BC 02 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 D6 06 C2 01 08 07 C2 01 BC 02 90 01 08 07 C2 01 D6 06'
-        dw3 = '7E 00 1B 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 00 43 00 C2 01 08 07 C2 01 A6'
-        mu1 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 02 FC 21 C6 11 C2 01 8A 02 C2 01 08 07 90 01 8A 02 C2 01 BC 02 C2 01 8A 02 90 01 BC 02 C2 01 8A 02 C2 01 8A 02 C2 01 D6 06 C2 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02'
-        mu2 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 01 90 01 08 07 C2 01 8A 02 90 01 BC 02 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02 90 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02 90 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 D6 06'
-        mu3 = '7E 00 1A 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 00 43 00 C2 01 08 07 90 01'
 
-        vu1 = '7E 00 52 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 02 FC 21 2A 12 5E 01 20 03 5E 01 3A 07 5E 01 20 03 2C 01 EE 02 90 01 EE 02 5E 01 EE 02 5E 01 20 03 5E 01 EE 02 5E 01 08 07 90 01 BC 02 90 01 6C 07 5E 01 3A 07 90 01 08 07 90 01 3A 07 90 01 EE 02'
-        vu2 = '7E 00 52 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 01 5E 01 3A 07 5E 01 EE 02 5E 01 20 03 5E 01 EE 02 5E 01 EE 02 5E 01 6C 07 5E 01 EE 02 90 01 BC 02 5E 01 20 03 5E 01 3A 07 90 01 3A 07 5E 01 3A 07 5E 01 3A 07 90 01 EE 02 5E 01 3A 07 90 01 6C 07'
-        vu3 = '7E 00 1A 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 00 43 00 2C 01 3A 07 90 01'
+        # dw1 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 02 60 22 C6 11 C2 01 BC 02 90 01 08 07 C2 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 90 01 BC 02 90 01 3A 07 90 01 BC 02 90 01 08 07 C2 01 08 07 90 01 08 07 C2 01 08 07 C2 01 8A 02'
+        # dw2 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 01 C2 01 08 07 90 01 08 07 C2 01 08 07 90 01 BC 02 C2 01 BC 02 90 01 08 07 90 01 BC 02 C2 01 8A 02 C2 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 D6 06 C2 01 08 07 C2 01 BC 02 90 01 08 07 C2 01 D6 06'
+        # dw3 = '7E 00 1B 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 00 43 00 C2 01 08 07 C2 01 A6'
 
-        vd1 = '7E 00 52 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 02 FC 21 2A 12 90 01 BC 02 5E 01 3A 07 90 01 EE 02 5E 01 EE 02 C2 01 8A 02 90 01 EE 02 5E 01 20 03 5E 01 BC 02 5E 01 6C 07 5E 01 EE 02 90 01 3A 07 5E 01 3A 07 5E 01 6C 07 5E 01 3A 07 C2 01 BC 02'
-        vd2 = '7E 00 52 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 01 5E 01 6C 07 2C 01 3A 07 90 01 BC 02 C2 01 BC 02 C2 01 8A 02 90 01 3A 07 5E 01 20 03 2C 01 EE 02 90 01 BC 02 90 01 EE 02 5E 01 3A 07 90 01 3A 07 90 01 08 07 90 01 EE 02 90 01 3A 07 5E 01 3A 07'
-        vd3 = '7E 00 1A 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 00 43 00 90 01 3A 07 5E 01'
-        
-        if commd == 'ON':
-            print("IRcommd: ON")
-            self.IRSend(on1)
-            sleep(0.15)
-            self.IRSend(on2)
-            sleep(0.15)
-            self.IRSend(on3)
+        # mu1 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 02 FC 21 C6 11 C2 01 8A 02 C2 01 08 07 90 01 8A 02 C2 01 BC 02 C2 01 8A 02 90 01 BC 02 C2 01 8A 02 C2 01 8A 02 C2 01 D6 06 C2 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02'
+        # mu2 = '7E 00 52 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 01 90 01 08 07 C2 01 8A 02 90 01 BC 02 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02 90 01 BC 02 90 01 BC 02 C2 01 8A 02 C2 01 D6 06 C2 01 D6 06 C2 01 BC 02 90 01 BC 02 90 01 08 07 C2 01 D6 06 C2 01 D6 06'
+        # mu3 = '7E 00 1A 10 01 00 13 A2 00 40 C2 8B B7 FF FE 00 00 72 00 02 00 43 00 C2 01 08 07 90 01'
 
-        elif commd == 'UP':
-            print("IRcommd: P_UP")
-            self.IRSend(up1)
-            sleep(0.15)
-            self.IRSend(up2)
-            sleep(0.15)
-            self.IRSend(up3)
+        # vu1 = '7E 00 52 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 02 FC 21 2A 12 5E 01 20 03 5E 01 3A 07 5E 01 20 03 2C 01 EE 02 90 01 EE 02 5E 01 EE 02 5E 01 20 03 5E 01 EE 02 5E 01 08 07 90 01 BC 02 90 01 6C 07 5E 01 3A 07 90 01 08 07 90 01 3A 07 90 01 EE 02'
+        # vu2 = '7E 00 52 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 01 5E 01 3A 07 5E 01 EE 02 5E 01 20 03 5E 01 EE 02 5E 01 EE 02 5E 01 6C 07 5E 01 EE 02 90 01 BC 02 5E 01 20 03 5E 01 3A 07 90 01 3A 07 5E 01 3A 07 5E 01 3A 07 90 01 EE 02 5E 01 3A 07 90 01 6C 07'
+        # vu3 = '7E 00 1A 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 00 43 00 2C 01 3A 07 90 01'
 
-        elif commd == 'DOWN':
-            print("IRcommd: P_DOWN")
-            self.IRSend(dw1)
-            sleep(0.15)
-            self.IRSend(dw2)
-            sleep(0.15)
-            self.IRSend(dw3)
+        # vd1 = '7E 00 52 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 02 FC 21 2A 12 90 01 BC 02 5E 01 3A 07 90 01 EE 02 5E 01 EE 02 C2 01 8A 02 90 01 EE 02 5E 01 20 03 5E 01 BC 02 5E 01 6C 07 5E 01 EE 02 90 01 3A 07 5E 01 3A 07 5E 01 6C 07 5E 01 3A 07 C2 01 BC 02'
+        # vd2 = '7E 00 52 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 01 5E 01 6C 07 2C 01 3A 07 90 01 BC 02 C2 01 BC 02 C2 01 8A 02 90 01 3A 07 5E 01 20 03 2C 01 EE 02 90 01 BC 02 90 01 EE 02 5E 01 3A 07 90 01 3A 07 90 01 08 07 90 01 EE 02 90 01 3A 07 5E 01 3A 07'
+        # vd3 = '7E 00 1A 10 00 00 00 00 00 00 00 00 00 FF FE 00 00 72 00 02 00 43 00 90 01 3A 07 5E 01'
+        self.IRSend(pack1)
+        sleep(0.2)
+        self.IRSend(pack2)
+        sleep(0.2)
+        self.IRSend(pack3)
 
+        # self.IRSend(up1)
+        # sleep(0.2)
+        # self.IRSend(up2)
+        # sleep(0.2)
+        # self.IRSend(up3)
+        # if commd == 'ON':
+        #     print("IRcommd: ON")
 
-        elif commd == 'MUTE':
-            print("IRcommd: MUTE")
-            self.IRSend(mu1)
-            sleep(0.15)
-            self.IRSend(mu2)
-            sleep(0.15)
-            self.IRSend(mu3)
+        # elif commd == 'UP':
+        #     print("IRcommd: P_UP")
 
-        elif commd == 'VU':
-            print("IRcommd: VOL_UP")
-            self.IRSend(vu1)
-            sleep(0.15)
-            self.IRSend(vu2)
-            sleep(0.15)
-            self.IRSend(vu3)
+        # elif commd == 'DOWN':
+        #     print("IRcommd: P_DOWN")
 
-        elif commd == 'VD':
-            print("IRcommd: VOL_DOWN")
-            self.IRSend(vd1)
-            sleep(0.15)
-            self.IRSend(vd2)
-            sleep(0.15)
-            self.IRSend(vd3)
-    
+        # elif commd == 'MUTE':
+        #     print("IRcommd: MUTE")
+
+        # elif commd == 'VU':
+        #     print("IRcommd: VOL_UP")
+           
+
+        # elif commd == 'VD':
+        #     print("IRcommd: VOL_DOWN")
 
         # # NEC CODE
         # ON = '7E 00 16 10 00 00 13 A2 00 40 EC 3A BE FF FE 00 00 72 01 20 00 B7 48 F3 04'
@@ -523,13 +519,13 @@ class XBee():
         #     self.IRSend(DW)
 
         sleep(0.2)
-        Msg = self.Receive()
-        try:
-            if Msg:
-                print("Node IR Switch")
-        except:
-            print('Nothing return')
-
+        # Msg = self.Receive()
+        # try:
+        #     if Msg:
+        #         print("Node IR Switch")
+        # except:
+        #     print('Nothing return')
+        print("Node IR Switch")
 
     def node_all_reset(self):
         node_address = '7E 00 10 17 01 00 00 00 00 00 00 FF FF FF FE' 
@@ -537,19 +533,87 @@ class XBee():
         sleep(1)
         self.Node_One_Send(bytearray.fromhex("02 44 31 05"), node_address)
         sleep(1)
-        Msg = self.Receive()
-        if Msg:
-            print("Node_reset_all")
-
+        # Msg = self.Receive()
+        # if Msg:
+        #     print("Node_reset_all")
+        print("Node_reset_all")
     def node_one_reset(self,node_address):
         node_address = '7E 00 10 17 01'+node_address+'FF FE' 
         self.Node_One_Send(bytearray.fromhex("02 44 31 04"), node_address)
         sleep(1)
         self.Node_One_Send(bytearray.fromhex("02 44 31 05"), node_address)
         sleep(1)
-        Msg = self.Receive()
-        if Msg:
-            print("Node_reset_one")
+        # Msg = self.Receive()
+        # if Msg:
+        #     print("Node_reset_one")
+        print("Node_reset_one")
 
 
 
+
+    def IRReceive(self):
+        """
+           Receives data from serial and checks buffer for potential messages.
+           Returns the next message in the queue if available.
+        """
+        sleep(5)
+        self.RxMessages.clear()
+        remaining = self.serial.inWaiting()
+        IRPack = []
+        while remaining:
+            chunk = self.serial.read(remaining)
+            remaining -= len(chunk)
+            self.RxBuff.extend(chunk)
+
+        msgs = self.RxBuff.split(bytes(b'\x7E'))
+
+        #### DEBUG用 
+        # a = list(self.RxBuff)
+        # t = ((""+' '.join(['%02.x']*len(a))+"") % tuple(a)).upper()
+        # print("DEBUG: "+t)
+        ####
+
+        for msg in msgs[:-1]:
+            # print("msg: ")
+            # print(msg)
+            if(len(msg)>0): # 避免空的訊息
+                self.Validate(msg)
+
+
+        self.RxBuff = (bytearray() if self.Validate(msgs[-1]) else msgs[-1])
+        i = 0
+        if self.RxMessages: # 如果 self.RxMessages 有東西
+            for msg in self.RxMessages :
+                #### DEBUG
+                decodePAK = list(msg)
+                # print(decodePAK)
+                t = ((""+' '.join(['%02.x']*len(decodePAK))+"") % tuple(decodePAK)).upper()
+                print("DEBUG: "+t)
+                ####
+
+
+                i=i+1
+                IRPack.append(["7E "+t[:-3]])
+                # print (IRPack)
+                ## 用封包長度確認收到的封包整累
+                # decodePAK = list(msg)
+                # packageLen = decodePAK[1]
+                ##
+                # node 全開、全關
+                # n 全開、全關
+                # p 封包
+                # if(packageLen == 13): # P package
+                #     print('收到P封包')
+                # elif(packageLen == 17):
+                #     print("收到電流封包") 
+                #     result = self.Currentreport(msg)
+                #     print(result)
+                #     self.nodeCurrent.append(result)
+                # elif(packageLen == 14):
+                #     print('收到廣播命令封包')
+                # else:
+                #     print('無法辨認')
+            return IRPack
+           #return self.RxMessages.popleft()
+        else:
+            return None
